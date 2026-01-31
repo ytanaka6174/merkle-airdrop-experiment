@@ -1,66 +1,31 @@
-## Foundry
+# Merkle Airdrop
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A Merkle tree-based airdrop contract with EIP-712 signature verification. Built with Foundry.
 
-Foundry consists of:
+## What's in here
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- `MerkleAirdrop.sol` - The airdrop contract. Users claim tokens by providing a Merkle proof + a signature.
+- `ToasterToken.sol` - Simple ERC20 token (TOT) used for the airdrop.
+- Scripts for generating the Merkle tree and deploying everything.
 
-## Documentation
+## How it works
 
-https://book.getfoundry.sh/
+1. Generate a list of addresses and amounts (`script/GenerateInput.s.sol`)
+2. Build the Merkle tree and get the root (`script/MakeMerkle.s.sol`)
+3. Deploy the token and airdrop contract with that root
+4. Users sign a message and claim with their proof
+
+The signature requirement means someone else can submit the claim tx on your behalf (gas abstraction).
 
 ## Usage
 
-### Build
-
 ```shell
-$ forge build
+forge build
+forge test
 ```
 
-### Test
+## Deploy
 
 ```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+forge script script/DeployTokenAndAirdrop.s.sol --rpc-url <rpc_url> --private-key <key> --broadcast
 ```
